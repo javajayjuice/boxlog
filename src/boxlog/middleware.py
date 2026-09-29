@@ -34,12 +34,25 @@ def _choose_request_id(incoming: Optional[str]) -> str:
     return uuid.uuid4().hex
 
 
+def _is_quiet(path: str, quiet: tuple[str, ...]) -> bool:
+    """Prefix match, except "/" itself: since every path starts with "/", treating it
+    as a prefix would silence the whole app's access log rather than just the root
+    path. So "/" in `quiet` only matches the root path exactly."""
+    for pattern in quiet:
+        if pattern == "/":
+            if path == "/":
+                return True
+        elif path.startswith(pattern):
+            return True
+    return False
+
+
 def _level_for(status: int, path: str, quiet: tuple[str, ...]) -> int:
     if status >= 500:
         return logging.ERROR
     if status >= 400:
         return logging.WARNING
-    if quiet and path.startswith(quiet):
+    if quiet and _is_quiet(path, quiet):
         return logging.DEBUG
     return logging.INFO
 
@@ -76,10 +89,11 @@ def _log_unhandled(method: str, path: str, exc: BaseException) -> None:
 class RequestIdMiddleware:
     """ASGI middleware.
 
-        app.add_middleware(RequestIdMiddleware, quiet_paths=("/health", "/logs"))
+        app.add_middleware(RequestIdMiddleware, quiet_paths=("/health", "/logs", "/"))
 
     `quiet_paths`: successful requests under these prefixes are logged at DEBUG
     (health probes, the log viewer's own polling), failures still at WARNING/ERROR.
+    A bare "/" matches only the root path itself, not every path (see `_is_quiet`).
     """
 
     def __init__(
@@ -136,7 +150,7 @@ class WSGIRequestIdMiddleware:
 
     The id is bound while the app is called. A streaming response body that's
     iterated after the app returns is outside that scope, so records logged while
-    streaming won't carry it.
+    streaming won't carry it. `quiet_paths` behaves as in `RequestIdMiddleware`.
     """
 
     def __init__(

@@ -66,6 +66,17 @@ async def test_asgi_quiet_paths_log_at_debug(capture):
     assert capture.find(event="http.request")["level"] == "DEBUG"
 
 
+async def test_root_in_quiet_paths_matches_only_the_root_path(capture):
+    """"/" is a prefix of every path - a naive startswith() would silence the whole
+    app's access log, not just the root probe."""
+    async with client(RequestIdMiddleware(app, quiet_paths=("/",))) as c:
+        await c.get("/")
+        await c.get("/api/whatsapp")
+    records = [r for r in capture.records if r["event"] == "http.request"]
+    assert records[0]["level"] == "DEBUG"
+    assert records[1]["level"] == "INFO"
+
+
 # -- WSGI middleware ------------------------------------------------------------
 
 

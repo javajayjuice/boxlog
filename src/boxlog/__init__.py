@@ -38,7 +38,7 @@ from boxlog.redaction import Redactor
 from boxlog.timing import already_logged, log_step, mark_logged
 from boxlog.viewer import create_viewer
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 __all__ = [
     "DEFAULT_QUIET_LOGGERS",

@@ -4,13 +4,13 @@ build-backend = "hatchling.build"
 
 [project]
 name = "boxfusion-log"
-version = "0.1.0"
+version = "0.1.1"
 description = "Structured JSON logging with request tracing, secret redaction, pluggable storage and a built-in web log viewer."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
 license-files = ["LICENSE"]
-authors = [{ name = "Boxfusion" }]
+authors = [{ name = "Jabulani" }]
 keywords = ["logging", "structured-logging", "json", "tracing", "log-viewer", "asgi", "fastapi"]
 classifiers = [
     "Development Status :: 3 - Alpha",

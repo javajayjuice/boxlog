@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.1
+
+- Fixed: `quiet_paths=("/", ...)` in `RequestIdMiddleware`/`WSGIRequestIdMiddleware` no longer
+  silences the whole app's access log. `"/"` is a prefix of every path, so it previously matched
+  (and quieted) every request; it now matches only the root path itself. Other entries in
+  `quiet_paths` are unaffected and still match by prefix.
+
 ## 0.1.0
 
 First release, extracted from the RSL service-automation app.

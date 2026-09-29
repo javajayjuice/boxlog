@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>{{title}}</title>
+  <link rel="stylesheet" href="static/logs.css">
+</head>
+<body data-title="{{title}}" data-trace-fields="{{trace_fields}}">
+  <div id="login" class="login" hidden>
+    <form id="login-form" class="login-card" autocomplete="off">
+      <h1 id="login-title">{{title}}</h1>
+      <p class="muted">Enter the log viewer token.</p>
+      <input id="token-input" type="password" required spellcheck="false" aria-label="Log viewer token">
+      <p id="login-error" class="login-error" hidden></p>
+      <button type="submit">Open logs</button>
+    </form>
+  </div>
+
+  <div id="app" hidden>
+    <header class="bar">
+      <div class="brand"><span id="live-dot" class="dot" title="Live tail"></span><span id="brand-title">{{title}}</span></div>
+      <div id="stats" class="stats" aria-live="polite"></div>
+      <button id="logout" class="ghost" type="button">Sign out</button>
+    </header>
+
+    <section class="filters" aria-label="Filters">
+      <label>Level
+        <select id="f-level">
+          <option value="">All</option>
+          <option value="INFO">Info and above</option>
+          <option value="WARNING">Warnings and above</option>
+          <option value="ERROR">Failures only</option>
+        </select>
+      </label>
+      <label id="service-wrap" hidden>Service
+        <select id="f-service"><option value="">Any</option></select>
+      </label>
+      <label>Source
+        <select id="f-source"><option value="">Any</option></select>
+      </label>
+      <label>Event
+        <input id="f-event" placeholder="prefix, e.g. http or db.query" spellcheck="false">
+      </label>
+      <label class="grow">Search
+        <input id="f-q" type="search" placeholder="Text in message, fields or traceback" spellcheck="false">
+      </label>
+      <label class="toggle"><input id="f-live" type="checkbox" checked> Live</label>
+      <button id="refresh" type="button">Refresh</button>
+    </section>
+
+    <div id="trace" class="trace" hidden>
+      <span>Tracing <span id="trace-kind"></span> <code id="trace-id"></code></span>
+      <button id="trace-clear" class="ghost" type="button">Clear trace</button>
+    </div>
+    <div id="banner" class="banner" role="alert" hidden></div>
+
+    <main class="table-wrap">
+      <table class="logs">
+        <thead>
+          <tr><th>Time</th><th>Level</th><th class="col-service">Service</th><th>Source</th><th>Event</th><th>Message</th><th>Trace</th></tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <p id="empty" class="empty" hidden>No records match these filters.</p>
+    </main>
+  </div>
+
+  <script src="static/logs.js"></script>
+</body>
+</html>

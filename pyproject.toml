@@ -1,0 +1,58 @@
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
+[project]
+name = "boxfusion-log"
+version = "0.1.0"
+description = "Structured JSON logging with request tracing, secret redaction, pluggable storage and a built-in web log viewer."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Boxfusion" }]
+keywords = ["logging", "structured-logging", "json", "tracing", "log-viewer", "asgi", "fastapi"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: System :: Logging",
+    "Framework :: FastAPI",
+    "Typing :: Typed",
+]
+# The core is stdlib-only. Storage and the standalone viewer are opt-in.
+dependencies = []
+
+[project.optional-dependencies]
+redis = ["redis>=4.5"]
+web = ["uvicorn>=0.23"]
+all = ["redis>=4.5", "uvicorn>=0.23"]
+dev = [
+    "pytest>=8",
+    "pytest-asyncio>=0.23",
+    "httpx>=0.27",
+    "redis>=4.5",
+    "uvicorn>=0.23",
+    "build>=1.2",
+    "twine>=5",
+]
+
+[project.scripts]
+boxlog = "boxlog.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/boxlog"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/boxlog", "tests", "README.md", "LICENSE", "CHANGELOG.md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+filterwarnings = ["error::DeprecationWarning:boxlog.*"]
